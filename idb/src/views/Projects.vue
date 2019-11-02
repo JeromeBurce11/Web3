@@ -1,9 +1,14 @@
 <template>
 <div id="home">
-    <NavBar :user="users" />
+    <NavBar/>
     <v-container  class="mx-auto" id="container">
         <center><h1>Projects</h1></center><br/>
         <Button/>
+    </v-container>
+    <v-container>
+            <v-col v-for="(data,idx) in datas" :key="idx">
+                <Cat :data="data" @delete="deletedata" @edit="editdata" />
+            </v-col>
     </v-container>
 </div>
 </template>
@@ -11,19 +16,37 @@
 <script>
 import NavBar from '@/components/NavBar.vue'
 import Button from '@/components/Button.vue'
+import Cat from '@/components/Cat.vue'
 export default {
     components: {
         NavBar,
-        Button
+        Button,
+         Cat
     },
     computed: {
-        users() {
-            return this.$store.state.users;
+        datas() {
+            return this.$store.state.datas;
         }
     },
-    created() {
-        this.$store.dispatch('getUsers');
+   created() {
+        this.$store.dispatch('getSolution');
     },
+    methods: {
+        async deletedata(data) {
+            console.log('delete', data.id);
+            await this.$store.dispatch('deleteData', data);
+            this.$store.dispatch('getSolution');
+        },
+        editdata(data) {
+            console.log('edit', data.id);
+            this.$router.push({
+                name: '/',
+                params: {
+                    data: data
+                }
+            });
+        }
+    }
 }
 </script>
 

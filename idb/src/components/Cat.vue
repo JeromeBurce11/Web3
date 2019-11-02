@@ -1,38 +1,47 @@
 <template>
-
-  <v-card>
+<v-card>
     <v-card-title>
-      {{ data.name }}
+        {{ data.name }}
     </v-card-title>
-    <div>{{data.items}}
-    </div>
+
     <v-card-text>
-      <p>
-    {{ data.address }}
-      </p>
-      <v-img :src="data.file"></v-img>
+        {{data.items}}
+        <p>
+            {{ data.address }}
+        </p>
+        <img :src="dataUrl" alt="image" />
     </v-card-text>
     <v-card-actions>
-      <v-btn color="red" @click="$emit('delete',data)">Delete</v-btn>
-      <v-btn @click="$emit('edit',data)">Edit</v-btn>
+        <v-btn color="red" @click="$emit('delete',data)">Delete</v-btn>
+        <v-btn @click="$emit('edit',data)">Edit</v-btn>
     </v-card-actions>
-  </v-card>
-
+</v-card>
 </template>
 
 <script>
 export default {
-  props: {
-    data:Object,
-    src:Object
-  }, 
-  data: () => ({
+    props: {
+        data: Object,
 
-  }),
-  created() {
-    console.log('data created');
-  },
-  methods: {
-  }
+    },
+    data: () => ({
+
+    }),
+    created() {
+        console.log('data created');
+    },
+    methods: {},
+
+    computed: {
+        dataUrl() {
+            return 'data:image/jpeg;base64,' + btoa(
+                new Uint8Array(this.data)
+                .reduce((data, byte) => (data.push(String.fromCharCode(byte)),data),[]).join(''))
+          
+            
+            
+        }
+    }
+
 };
 </script>

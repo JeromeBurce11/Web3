@@ -43,8 +43,10 @@ export default new Vuex.Store({
       context.state.datas = [];
       let datas = await idb2.getDatas();
       datas.forEach(c => {
-        if((c.items) === "problem")
+        if((c.items) === 'Problem'){
           context.state.datas.push(c);
+        }
+        
       });
     },
 
@@ -52,7 +54,7 @@ export default new Vuex.Store({
       context.state.datas = [];
       let datas = await idb2.getDatas();
       datas.forEach(c => {
-        if((c.items) === "solution")
+        if((c.items) === "Solution")
           context.state.datas.push(c);
       });
     },
