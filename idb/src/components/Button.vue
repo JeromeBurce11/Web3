@@ -2,10 +2,13 @@
 <v-row justify="center">
     <v-dialog v-model="dialog" persistent max-width="600px">
         <template v-slot:activator="{ on }">
-            <v-btn color="primary" dark v-on="on"   >Add Events</v-btn>
+            <v-btn color="primary" dark v-on="on">Add Event</v-btn>
         </template>
         <v-card>
-            <v-card-title>
+            <v-card-title class="headline blue lighten-2">
+                <v-avatar>
+                    <img src="../assets/icon.png" alt="EcoGreen">
+                </v-avatar>
                 <span class="headline">Events</span>
             </v-card-title>
             <v-form ref="data" @submit.prevent="submit">
@@ -36,6 +39,10 @@ export default {
     data: () => ({
         dialog: false,
         items: ['Problem', 'Solution'],
+        colorAlert: 'primary',
+        titleAlert: 'Alert',
+        activeAlert: false,
+        valueInput: '',
         data: {
             name: '',
             address: '',
@@ -89,5 +96,6 @@ export default {
     rules: {
         required: value => !!value || 'Required.',
     }
+
 }
 </script>
