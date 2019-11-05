@@ -1,36 +1,49 @@
 <template>
-<v-card class="mx-auto card" max-width="400">
-    <v-container>
-        <center><v-img src="@/assets/logos.png" id="image"></v-img>
-        <h1>Login</h1></center>
-        <form id="form">
+<v-row justify="center">
+    <v-dialog v-model="dialog" persistent max-width="600px">
+        <template v-slot:activator="{ on }">
+            <v-btn color="primary" dark v-on="on">Join The Revolution</v-btn>
+        </template>
+        <v-card class="mx-auto card" max-width="400">
             <v-container>
-            <v-text-field v-model="user.username" :rules="[rules.required]" label="Username"></v-text-field>
-            <v-text-field v-model="user.password" :append-icon="show1 ? 'visibility' : 'visibility_off'" :rules="[rules.required, rules.password]" :type="show1 ? 'text' : 'password'" name="input-10-1" label="Password" hint="At least 8 characters" counter @click:append="show1 = !show1"></v-text-field>
-            <v-btn class="mr-4" @click="checkform" color="green">submit</v-btn>
-            <v-btn @click="clear">clear</v-btn>
+                <center>
+                    <v-img src="@/assets/logos.png" id="image"></v-img>
+                    <h1>Login</h1>
+                </center>
+                <form id="form">
+                    <v-container>
+                        <v-text-field v-model="user.username" :rules="[rules.required]" label="Username"></v-text-field>
+                        <v-text-field v-model="user.email" :rules="[rules.required, rules.email]" label="E-mail"></v-text-field>
+                        <v-text-field v-model="user.address" :rules="[rules.required]" label="Address"></v-text-field>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="blue darken-1" text @click="dialog = false">Close</v-btn>
+                            <v-btn color="blue darken-1" :disabled="!formIsValid" text @click="checkform">Save</v-btn>
+                        </v-card-actions>
+                    </v-container>
+                </form><br />
             </v-container>
-        </form><br />
-    </v-container>
-</v-card>
+        </v-card>
+    </v-dialog>
+</v-row>
 </template>
 
 <script>
 export default {
     data() {
         return {
-            show1: false,
-            password: 'Password',
+            dialog:false,
             user: {
-                username:'',
-                password: ''
+                username: '',
+                email: '',
+                address: ''
 
             },
             rules: {
                 required: value => !!value || 'Required.',
-                password: value => {
-                    const pattern = /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/
-                    return pattern.test(value) || 'Password Must contain 1 capital, special characters, and more than 8 letters'
+                email: value => {
+                    const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+                    return pattern.test(value) || 'Invalid e-mail.'
                 },
             }
         }
@@ -38,14 +51,19 @@ export default {
     methods: {
         checkform: function (e) {
             if (this.email !== null && this.password !== null) {
+                this.dialog = false;
                 this.$router.push('/homepage')
             }
             e.preventDefault();
-        },
-        clear() {
-            this.$v.$reset()
-            this.username = ''
-            this.password = ''
+        }
+    },
+     computed: {
+        formIsValid() {
+            return (
+                this.user.username &&
+                this.user.address &&
+                this.user.email 
+            )
         },
     },
 }
@@ -55,7 +73,8 @@ export default {
 .card {
     margin-top: 5%;
 }
-#image{
+
+#image {
     width: 40%;
     height: 40%;
 }
