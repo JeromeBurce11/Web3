@@ -3,16 +3,48 @@ import Vuex from "vuex";
 
 import idb from "@/api/idb";
 import idb2 from '@/api/dataDB';
-
+import axios from 'axios'
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    accessToken: null,
+    loggingIn: false,
+    loginError: null,
     users: [],
     datas:[]
   },
-  mutations: {},
+  mutations: {
+    loginStart: state => state.loggingIn = true,
+    loginStop: (state, errorMessage) => {
+      state.loggingIn = false;
+      state.loginError = errorMessage;
+    },
+    updateAccessToken: (state, accessToken) => {
+      state.accessToken = accessToken;
+    }
+  },
   actions: {
+    doLogin({ commit }, loginData) {
+      commit('loginStart');
+
+      axios.post('https://reqres.in/api/login', {
+        ...loginData
+      })
+      .then(response => {
+        localStorage.setItem('accessToken', response.data.token);
+        commit('loginStop', null);
+        commit('updateAccessToken', response.data.token);
+      })
+      .catch(error => {
+        commit('loginStop', error.response.data.error);
+        commit('updateAccessToken', null);
+      })
+    },
+    fetchAccessToken({ commit }) {
+      commit('updateAccessToken', localStorage.getItem('accessToken'));
+    },
+    ////////////////////
     async deleteUser(context, user) {
       console.log("store is being asked to delete " + user.id);
       await idb.deleteUser(user);

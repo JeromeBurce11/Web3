@@ -6,17 +6,18 @@ import Login from './views/NavForm2.vue'
 import HomePage from './views/HomePage.vue'
 import Issues from './views/Issues.vue'
 import Projects from './views/Projects.vue'
+import store from './store.js'
 
 Vue.use(Router)
-
-export default new Router({
+const router = new Router({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: [
     {
       path: '/',
       name: 'login',
-      component: Login
+      component: Login,
+      
     },
     {
       path: '/register',
@@ -48,3 +49,19 @@ export default new Router({
     }
   ]
 })
+router.beforeEach((to, from, next) => {
+  store.dispatch('fetchAccessToken');
+  if (to.fullPath === '/issues') {
+    if (!store.state.accessToken) {
+      next('/login');
+    }
+  }
+  if (to.fullPath === '/projects') {
+    if (store.state.accessToken) {
+      next('/users');
+    }
+  }
+  next();
+});
+
+export default router;
