@@ -1,16 +1,24 @@
 <template>
-<v-toolbar dense color="transparent" class="white--text">
-    <v-toolbar-title>Eco Green |</v-toolbar-title>
-
-</v-toolbar>
+<v-card color="blue lighten-4" flat  tile>
+    <center><v-toolbar dense height="100" >
+        <v-img :src="require('@/assets/icon.png')" max-width="100"></v-img>
+        <h1>Eco-Green</h1>
+    </v-toolbar></center>
+</v-card>
 </template>
 
 <script>
-export default {}
+export default {
+
+}
 </script>
 
-<style>
-body{
-    background-color: aqua
+<style scoped>
+#image {
+    width: 10%;
+    height: 20%;
+}
+h1{
+    color: green
 }
 </style>

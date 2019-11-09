@@ -1,14 +1,8 @@
 <template>
-<v-row justify="center">
-    <v-dialog v-model="dialog" persistent max-width="600px">
-        <template v-slot:activator="{ on }">
-            <v-btn color="primary" dark v-on="on">Join The Revolution</v-btn>
-        </template>
-        <v-card class="mx-auto card" max-width="400">
+        <v-card class="mx-auto card" max-width="500">
             <v-container>
                 <center>
-                    <v-img src="@/assets/logos.png" id="image"></v-img>
-                    <h1>Login</h1>
+                    <v-img :src="require('@/assets/logos.png')" id="image"></v-img>
                 </center>
                 <form id="form">
                     <v-container>
@@ -17,27 +11,21 @@
                         <v-text-field v-model="user.address" :rules="[rules.required]" label="Address"></v-text-field>
                         <v-card-actions>
                             <v-spacer></v-spacer>
-                            <v-btn color="blue darken-1" text @click="dialog = false">Close</v-btn>
-                            <v-btn color="blue darken-1" :disabled="!formIsValid" text @click="checkform">Save</v-btn>
+                            <v-btn color="blue darken-1" :disabled="!formIsValid" text @click="checkform">Join</v-btn>
                         </v-card-actions>
                     </v-container>
                 </form><br />
             </v-container>
         </v-card>
-    </v-dialog>
-</v-row>
 </template>
-
 <script>
 export default {
     data() {
         return {
-            dialog:false,
             user: {
                 username: '',
                 email: '',
                 address: ''
-
             },
             rules: {
                 required: value => !!value || 'Required.',
@@ -52,7 +40,6 @@ export default {
         checkform: function (e) {
             if (this.email !== null && this.password !== null) {
                 this.dialog = false;
-                this.$router.push('/homepage')
             }
             e.preventDefault();
         }
@@ -70,10 +57,6 @@ export default {
 </script>
 
 <style>
-.card {
-    margin-top: 5%;
-}
-
 #image {
     width: 40%;
     height: 40%;
