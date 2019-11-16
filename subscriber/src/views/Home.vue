@@ -1,16 +1,16 @@
 <template>
 <div id="app">
-  <Header/>
+  <Carousel/>
 </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import Header from "@/components/Common/Header.vue";
+import Carousel from "@/components/Common/Carousel.vue";
 
 export default {
     components:{
-      Header
+      Carousel
     }
 }
 </script>
