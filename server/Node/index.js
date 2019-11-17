@@ -5,6 +5,7 @@ const account = require("./account");
 const subscriber = require("./subscriber");
 const event = require("./event");
 const bodyParser = require('body-parser')
+var cors = require('cors')
 
 var mongoose = require('mongoose');
 
@@ -22,7 +23,7 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
   console.log("we're connected")
 });
-
+app.use(cors())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -66,14 +67,14 @@ app.post('/register', function (req, res) {
   test();
 })
 
-app.post('/subscribe', function (req, res) {
+app.post('/subscribe',function (req, res) {
   let test = async function () {
-    const exist = await subscriber.getByUsername(req.headers.username);
+    const exist = await subscriber.getByUsername(req.body.username);
     if (exist == null) {
       let data = {
-        username: req.headers.username,
-        email : req.headers.email,
-        address: req.headers.address
+        username: req.body.username,
+        email : req.body.email,
+        address: req.body.address
       }
       await subscriber.addSubscriber(data);
       let item = await subscriber.getLastSubscriber();

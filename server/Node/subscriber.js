@@ -1,14 +1,15 @@
 const mongoose = require("mongoose");
 
 var Schema = new mongoose.Schema({
-    username: {type:String, required:true, unique:true},
-    email: {type: String, required: true},
-    address: {type: String, required: true}
+    username: {type:String,  unique:true},
+    email: {type: String},
+    address: {type: String}
  });
 
  Schema.statics.addSubscriber = async function (subscriber){
     var Subscriber = new this(subscriber);
     var result =  await Subscriber.save(subscriber);
+    console.log(result);
     return result;
  }
  
