@@ -8,6 +8,7 @@
         <v-container>
             <center>
                 <v-img :src="require('@/assets/logo.png')" id="image"></v-img>
+                <h1 v-show="isSubscribe">Thank Your For Being Part Of the Advocacy</h1>
             </center>
             <form id="form" @submit.prevent="subscribe" v-show="!isSubscribe">
                 <v-container>
@@ -28,7 +29,7 @@
 
 <script>
 import axios from "axios";
-
+const BASE_URL = 'http://localhost:3000';
 export default {
     data() {
         return {
@@ -52,13 +53,14 @@ export default {
         subscribe: function () {
             this.isSubscribe = true;
             const formData = new FormData();
-            alert('subscribing')
             formData.append("username", this.user.username)
             formData.append("email", this.user.email)
             formData.append("address", this.user.address)
-            axios.post("/subscribe", formData).then(res => {
+            // alert('subscribing')
+            axios.post(`${BASE_URL}/subscribe`, formData).then(res => {
                 alert("subscribe")
                 localStorage.setItem("user", JSON.stringify(res.data.user));
+                return res.data;
             })
         }
     },
