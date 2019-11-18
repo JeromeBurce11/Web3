@@ -10,3 +10,8 @@ export function createUser(data) {
         .catch(err => Promise.reject(err.message));
 }
 
+export function getNotes() {
+    return axios.get(`${BASE_URL}/retrieve`)
+            .then(response => response.data);
+}
+
