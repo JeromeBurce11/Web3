@@ -2,7 +2,6 @@
 <div>
 <v-dialog v-model="dialog" width="9000">
     <template v-slot:activator="{on}">
-        
         <v-btn v-on="on" color="primary" v-show ="!isSubscribe" >Join</v-btn>
     </template>
     <v-card class="mx-auto card" max-width="500">
@@ -56,18 +55,9 @@ export default {
                 .then(data=>{
                     this.$emit('creatUser', data.data);
                     this.username =""
+                    localStorage.setItem('subscriber', data.data)
                 })
                 .catch(err=>alert(err.message))
-            // const formData = new FormData();
-            // formData.append("username", this.user.username)
-            // formData.append("email", this.user.email)
-            // formData.append("address", this.user.address)
-            // alert('subscribing')
-            // axios.post(`${BASE_URL}/subscribe`, formData).then(res => {
-            //     alert("subscribe")
-            //     localStorage.setItem("user", JSON.stringify(res.data.user));
-            //     return res.data;
-            // })
         }
     },
     computed: {

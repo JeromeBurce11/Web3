@@ -7,6 +7,8 @@ const event = require("./event");
 const bodyParser = require('body-parser')
 var cors = require('cors')
 
+const sgMail = require('@sendgrid/mail');
+
 var mongoose = require('mongoose');
 
 mongoose.set('useNewUrlParser', true);
@@ -14,7 +16,10 @@ mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 mongoose.set('useUnifiedTopology', true);
 
-mongoose.connect('mongodb://localhost:27017/accounts', { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect('mongodb://localhost:27017/accounts', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
   .then(() => console.log('Now connected to MongoDB!'))
   .catch(err => console.error('Something went wrong', err));
 
@@ -25,7 +30,9 @@ db.once('open', function () {
 });
 app.use(cors())
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 
 app.get('/login', function (req, res) {
   let test = async function () {
@@ -33,15 +40,18 @@ app.get('/login', function (req, res) {
     const exist = await account.getAccount(req.headers.username, req.headers.password);
     if (exist == null) {
       res.json({
-        message : 'Username not found or invalid password!'
+        message: 'Username not found or invalid password!'
       })
-    }
-    else {
+    } else {
       res.send(exist)
     }
   }
   test();
-})  
+})
+
+
+
+
 
 app.post('/register', function (req, res) {
   let test = async function () {
@@ -51,14 +61,13 @@ app.post('/register', function (req, res) {
     if (exist == null) {
       let data = {
         username: req.headers.username,
-        email : req.headers.email,
+        email: req.headers.email,
         password: req.headers.password
       }
       await account.addPerson(data);
       let item = await account.getLastAccount();
       res.send(item)
-    }
-    else {
+    } else {
       res.json({
         message: 'Username already exist!'
       })
@@ -67,42 +76,54 @@ app.post('/register', function (req, res) {
   test();
 })
 
-app.post('/subscribe',function (req, res) {
+app.post('/subscribe', function (req, res) {
+  sgMail.setApiKey('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');
+    const msg = {
+      to: 'johnpatrick.cabia-an@student.passerellesnumeriques.org',
+      from: req.body.email,
+      subject: 'Sending with Twilio SendGrid is Fun',
+      text: req.body.address,
+      html: '<strong>Joined The Revolution</strong>',
+    };
+    
   let test = async function () {
+
     const exist = await subscriber.getByUsername(req.body.username);
     if (exist == null) {
       let data = {
         username: req.body.username,
-        email : req.body.email,
+        email: req.body.email,
         address: req.body.address
       }
       await subscriber.addSubscriber(data);
       let item = await subscriber.getLastSubscriber();
       res.send(item)
-    }
-    else {
+
+    } else {
       res.json({
         message: 'Username already exist!'
       })
     }
   }
+  sgMail.send(msg);
   test();
+  
 })
 
 app.post('/addEvent', (req, res) => {
   let test = async function () {
-      let data = {
-        title: req.headers.title,
-        dateCreated : req.headers.datecreated,
-        dateEvent : req.headers.dateevent,
-        address : req.headers.address,
-        description : req.headers.description,
-        createdBy : req.headers.createdby
-      }
-      await event.addEvent(data);
-      let item = await event.getLastEvent();
-      res.send(item)
+    let data = {
+      title: req.headers.title,
+      dateCreated: req.headers.datecreated,
+      dateEvent: req.headers.dateevent,
+      address: req.headers.address,
+      description: req.headers.description,
+      createdBy: req.headers.createdby
     }
+    await event.addEvent(data);
+    let item = await event.getLastEvent();
+    res.send(item)
+  }
   test();
 })
 
