@@ -1,16 +1,26 @@
 <template>
-<v-toolbar dense color="transparent" class="white--text">
-    <v-toolbar-title>Eco Green |</v-toolbar-title>
-
-</v-toolbar>
+<div>
+    <v-app-bar id="appbar" dense :collapse="!collapseOnScroll"
+      :collapse-on-scroll="collapseOnScroll" fixed>
+        <v-toolbar-title>EcoJoin</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-icon large color="teal darken-2">mdi-email</v-icon>
+    </v-app-bar>
+</div>
 </template>
 
 <script>
-export default {}
+export default {
+
+data: () => ({
+      collapseOnScroll: true,
+    }),
+}
 </script>
 
 <style>
-body{
-    background-color: aqua
+#appbar{
+    background-color:transparent
 }
+
 </style>
