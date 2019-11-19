@@ -77,13 +77,13 @@ app.post('/register', function (req, res) {
 })
 
 app.post('/subscribe', function (req, res) {
-  sgMail.setApiKey('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');
+  sgMail.setApiKey();
     const msg = {
       to: 'johnpatrick.cabia-an@student.passerellesnumeriques.org',
       from: req.body.email,
       subject: 'Sending with Twilio SendGrid is Fun',
       text: req.body.address,
-      html: '<strong>Joined The Revolution</strong>',
+      html: `<strong> ${req.body.username} From ${req.body.address}Joined The Revolution</strong>`,
     };
     
   let test = async function () {

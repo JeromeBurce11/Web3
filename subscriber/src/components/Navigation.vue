@@ -1,6 +1,6 @@
 <template>
 <div>
-    <v-app-bar id="appbar" dense :collapse="!collapseOnScroll"
+    <v-app-bar id="appbar" dense :collapse="!collapseOnScroll"  elevate-on-scroll
       :collapse-on-scroll="collapseOnScroll" fixed>
         <v-toolbar-title>EcoJoin</v-toolbar-title>
         <v-spacer></v-spacer>

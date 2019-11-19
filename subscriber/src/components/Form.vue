@@ -32,7 +32,7 @@
 import {createUser} from '@/components/Repository.js'
 export default {
     data() {
-        return {
+        return {    
             dialog: false,
             isSubscribe: false,
                 username: '',
@@ -65,7 +65,8 @@ export default {
             return (
                 this.username &&
                 this.address &&
-                this.email
+                this.email 
+                
             )
         },
     },
