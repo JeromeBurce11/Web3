@@ -11,7 +11,7 @@ var router = new Router({
   base: process.env.BASE_URL,
   routes: [
     {
-      path: '/',
+      path: '/login',
       name: 'login',
       component: Login,
       beforeEnter: (to, from, next) => {
@@ -29,6 +29,17 @@ var router = new Router({
       path: '/homepage',
       name: 'homepage',
       component: HomePage,
+      beforeEnter: (to, from, next) => {
+        if (store.state.authenticated == false) {
+          next("/login");
+        } else {
+          next();
+        }
+      },
+    },
+    {
+      path: '*',
+      component: Login,
       beforeEnter: (to, from, next) => {
         if (store.state.authenticated == false) {
           next("/login");
