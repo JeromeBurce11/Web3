@@ -6,6 +6,8 @@ const subscriber = require("./subscriber");
 const event = require("./event");
 const bodyParser = require('body-parser')
 var cors = require('cors')
+const jwt = require("jsonwebtoken")
+var bcrypt = require("bcryptjs");
 
 const sgMail = require('@sendgrid/mail');
 
@@ -17,9 +19,9 @@ mongoose.set('useCreateIndex', true);
 mongoose.set('useUnifiedTopology', true);
 
 mongoose.connect('mongodb://localhost:27017/accounts', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  })
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
   .then(() => console.log('Now connected to MongoDB!'))
   .catch(err => console.error('Something went wrong', err));
 
@@ -37,38 +39,49 @@ app.use(bodyParser.urlencoded({
 app.get('/login', function (req, res) {
   let test = async function () {
     console.log(req.headers.username)
-    const exist = await account.getAccount(req.headers.username, req.headers.password);
+    const exist = await account.getByUsernameAndGetPassword(req.headers.username);
     if (exist == null) {
-      res.json({
-        message: 'Username not found or invalid password!'
+      res.status(401).json({
+        message: "Validation failed. Given username and password aren't matching."
       })
     } else {
-      res.send(exist)
+      if (bcrypt.compareSync(password, exist[0].password)) {
+        var token = jwt.sign({
+          exist
+        }, config.secret, {
+          expiresIn: 86400 // expires in 24 hours
+        })
+        res.status(200).json({
+          success: true,
+          token: token,
+        })
+      }
+      else {
+        res.status(401).json({
+          message: "Validation failed. Given username and password aren't matching."
+        })
+      }
     }
   }
   test();
 })
 
-
-
-
-
 app.post('/register', function (req, res) {
+  const hash = bcrypt.hashSync(req.headers.password, saltRounds);
   let test = async function () {
-    // console.log(req.headers.username)
     const exist = await account.getByUsername(req.headers.username);
     console.log("username", exist)
     if (exist == null) {
       let data = {
         username: req.headers.username,
         email: req.headers.email,
-        password: req.headers.password
+        password: hash
       }
       await account.addPerson(data);
       let item = await account.getLastAccount();
-      res.send(item)
+      res.status(200).send(item)
     } else {
-      res.json({
+      res.status(401).json({
         message: 'Username already exist!'
       })
     }
@@ -78,14 +91,14 @@ app.post('/register', function (req, res) {
 
 app.post('/subscribe', function (req, res) {
   sgMail.setApiKey();
-    const msg = {
-      to: 'johnpatrick.cabia-an@student.passerellesnumeriques.org',
-      from: req.body.email,
-      subject: 'Sending with Twilio SendGrid is Fun',
-      text: req.body.address,
-      html: `<strong> ${req.body.username} From ${req.body.address}Joined The Revolution</strong>`,
-    };
-    
+  const msg = {
+    to: 'johnpatrick.cabia-an@student.passerellesnumeriques.org',
+    from: req.body.email,
+    subject: 'Sending with Twilio SendGrid is Fun',
+    text: req.body.address,
+    html: `<strong> ${req.body.username} From ${req.body.address}Joined The Revolution</strong>`,
+  };
+
   let test = async function () {
 
     const exist = await subscriber.getByUsername(req.body.username);
@@ -107,7 +120,7 @@ app.post('/subscribe', function (req, res) {
   }
   sgMail.send(msg);
   test();
-  
+
 })
 
 app.post('/addEvent', (req, res) => {
