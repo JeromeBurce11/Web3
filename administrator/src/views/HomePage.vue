@@ -1,37 +1,73 @@
 <template>
-<div id="home">
-    <NavBar :user="users"/>
-    <v-container  class="mx-auto" id="container">
-        <center><h1>Home</h1></center><br/>
-        <Button/>
-    </v-container>
-</div>
-</template>
+  <!-- <v-card> -->
+    <v-navigation-drawer
+      expand-on-hover
+      permanent
+    >
+      <template v-slot:prepend class="sidebarbackground" >
+        <v-list>
+          <v-list-item>
+            <v-list-item-avatar>
+              <v-img src="https://randomuser.me/api/portraits/women/85.jpg"></v-img>
+            </v-list-item-avatar>
+          </v-list-item>
 
+          <v-list-item
+            link
+            two-line
+          >
+            <v-list-item-content>
+              <v-list-item-title class="title">Sandra Adams</v-list-item-title>
+              <v-list-item-subtitle>sandra_a88@gmail.com</v-list-item-subtitle>
+            </v-list-item-content>
+            <v-list-item-action>
+              <v-icon>mdi-menu-down</v-icon>
+            </v-list-item-action>
+          </v-list-item>
+        </v-list>
+      </template>
+
+      <v-divider></v-divider>
+
+      <v-list
+        nav
+        dense
+      >
+        <v-list-item link>
+          <v-list-item-icon>
+            <v-icon>mdi-folder</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>My Files</v-list-item-title>
+        </v-list-item>
+        <v-list-item link>
+          <v-list-item-icon>
+            <v-icon>mdi-account-multiple</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>Shared with me</v-list-item-title>
+        </v-list-item>
+        <v-list-item link>
+          <v-list-item-icon>
+            <v-icon>mdi-star</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>Starred</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+  <!-- </v-card> -->
+   <Card/>
+</template>
 <script>
-import NavBar from '@/components/NavBar.vue'
-import Button from '@/components/Button.vue'
+
+import Card from '@/components/card.vue'
 export default {
-    components: {
-        NavBar,
-        Button
-    },
-    
-    computed: {
-        users() {
-            return this.$store.state.users;
-        }
-    },
-    created() {
-        this.$store.dispatch('getUsers');
-    },
+  components:{
+    Card
+  }
 }
 </script>
-
 <style>
-#container{
-    padding: 5%;
-    background-color: rgba(0, 0, 0, .10);
-    box-shadow: 1px 1px 2px black, 0 0 25px lightblue, 0 0 5px black;
+v-navigation-drawer_content{
+    background-image: url('../assets/background.jpg');
+    background-size: cover;
 }
 </style>
