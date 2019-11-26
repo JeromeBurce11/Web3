@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express();
-const event = require("../models/event");
+const event = require("./models/event");
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const mongoose = require('mongoose');
@@ -30,6 +30,7 @@ app.use(bodyParser.urlencoded({
 
 const login = require('./admin/login');
 const verify = require('./admin/verifyToken');
+const createAdmin = require('./admin/createAdmin');
 const subscribe = require('./subscriber/subscribe');
 
 const checkToken = (req, res, next) => {
@@ -51,7 +52,11 @@ app.get('/', checkToken, function (req, res) {
   verify.verifyToken(req, res);
 })
 
-app.get('/login', function (req, res) {
+app.post('/admin', (req, res) => {
+  createAdmin.create(req, res);
+})
+
+app.post('/login', function (req, res) {
   login.login(req, res);
 })
 

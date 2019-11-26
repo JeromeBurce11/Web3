@@ -1,7 +1,10 @@
+const express = require("express");
+const app = express();
 const jwt = require("jsonwebtoken");
 const config = require("../config");
 const account = require("../models/admin");
 const bodyParser = require("body-parser");
+const bcrypt = require("bcryptjs");
 app.use(bodyParser.json());
 app.use(
   bodyParser.urlencoded({
@@ -11,10 +14,7 @@ app.use(
 
 const login = (req, res) => {
   let test = async function() {
-    const exist = await account.getByAdmin(
-      req.body.username,
-      req.body.password
-    );
+    const exist = await account.getByUsernameAndGetPassword(req.body.username);
     if (exist == null) {
       res.status(401).json({
         success: false,
@@ -22,28 +22,40 @@ const login = (req, res) => {
           "Validation failed. Given username and password aren't matching."
       });
     } else {
-      jwt.sign(
-        { exist },
-        config.secret,
-        {
-          expiresIn: 86400 // expires in 24 hours
-        },
-        (error, token) => {
-          if (error) {
+      if (bcrypt.compareSync(req.body.password, exist.password)) {
+        const data = await account.getAccount(req.body.username)
+        jwt.sign(
+          { 
+            data
+           },
+          config.secret,
+          {
+            expiresIn: 86400 // expires in 24 hours
+          },
+          (error, token) => {
+            if (error) {
+              res.json({
+                error: error,
+                data: null
+              });
+            }
             res.json({
-              error: error,
-              data: null
+              error: null,
+              token: token
             });
           }
-          res.json({
-            error: null,
-            token: token
-          });
-        }
-      );
+        );
+      }
+      else {
+        res.status(401).json({
+          success: false,
+          message:
+            "Validation failed. Given username and password aren't matching."
+        });
+      }
     }
   };
+  test();
 };
-test();
 
-module.exports = {login}
+module.exports = { login };

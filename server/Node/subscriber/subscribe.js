@@ -1,11 +1,15 @@
-const sgMail = require('@sendgrid/mail');
-const bodyParser = require('body-parser')
+const express = require("express");
+const app = express();
+const sgMail = require("@sendgrid/mail");
+const bodyParser = require("body-parser");
 const subscriber = require("../models/subscriber");
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-  extended: true
-}));
+app.use(
+  bodyParser.urlencoded({
+    extended: true
+  })
+);
 
 const subscribe = (req, res) => {
   sgMail.setApiKey();
@@ -27,6 +31,7 @@ const subscribe = (req, res) => {
       };
       await subscriber.addSubscriber(data);
       let item = await subscriber.getLastSubscriber();
+      sgMail.send(msg);
       res.send(item);
     } else {
       res.json({
@@ -34,7 +39,7 @@ const subscribe = (req, res) => {
       });
     }
   };
-  sgMail.send(msg);
+
   test();
 };
 
