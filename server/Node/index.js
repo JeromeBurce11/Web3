@@ -30,6 +30,7 @@ app.use(bodyParser.urlencoded({
 
 const login = require('./admin/login');
 const verify = require('./admin/verifyToken');
+const subscribe = require('./subscriber/subscribe');
 
 const checkToken = (req, res, next) => {
   console.log(req.headers)
@@ -55,7 +56,7 @@ app.get('/login', function (req, res) {
 })
 
 app.post('/subscribe', function (req, res) {
-
+  subscribe.subscribe(req, res);
 })
 
 app.post('/addEvent', (req, res) => {
