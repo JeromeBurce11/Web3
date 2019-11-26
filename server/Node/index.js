@@ -2,6 +2,15 @@ const express = require('express')
 const app = express();
 const cors = require('cors')
 const mongoose = require('mongoose');
+const login = require('./admin/login');
+const verify = require('./admin/verifyToken');
+const createAdmin = require('./admin/createAdmin');
+const subscribe = require('./subscriber/subscribe');
+const create  = require('./events/create');
+const retrieveAll = require('./events/retrieveAll');
+const retrieveByTitle = require('./events/retrieveByTitle')
+const remove = require('./events/delete');
+const update = require('./events/update');
 
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
@@ -22,15 +31,6 @@ db.once('open', function () {
 });
 app.use(cors())
 
-const login = require('./admin/login');
-const verify = require('./admin/verifyToken');
-const createAdmin = require('./admin/createAdmin');
-const subscribe = require('./subscriber/subscribe');
-const create  = require('./events/create');
-const retrieveAll = require('./events/retrieveAll');
-const retrieveByTitle = require('./events/retrieveByTitle')
-const remove = require('./events/delete');
-const update = require('./events/update');
 
 const checkToken = (req, res, next) => {
   console.log(req.headers)
@@ -51,11 +51,9 @@ const checkToken = (req, res, next) => {
 app.get('/', checkToken, function (req, res) {
   verify.verifyToken(req, res);
 })
-
 app.post('/admin', (req, res) => {
   createAdmin.create(req, res);
 })
-
 app.post('/login', function (req, res) {
   login.login(req, res);
 })
@@ -67,22 +65,15 @@ app.post('/subscribe', function (req, res) {
 app.post('/event/create', (req, res) => {
   create.createEvent(req, res);
 })
-
 app.get('/event/retrieveAll', (req, res) => {
   retrieveAll.retrieve(req, res);
 })
-
-
-// DISPLAY ONLY THE DESIRED EVENT BY USING ITS TITLE
 app.get('/event/retrievebytitle', (req, res) => {
   retrieveByTitle.retrieve(req, res);
 })
-
-// DELETE AN SPECIFIC EVENT BY USING ITS TITLE
 app.delete('/event/delete', (req, res) => {
   remove.remove(req, res);
 })
-
 app.put('/event/update', (req, res) => {
   update.update(req, res);
 })
