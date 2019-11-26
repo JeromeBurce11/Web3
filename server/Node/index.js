@@ -65,6 +65,7 @@ app.get('/', checkToken, function (req, res) {
         });
         console.log('SUCCESS: Connected to protected route');
     }
+  })
 })
 
 app.get('/login', function (req, res) {
