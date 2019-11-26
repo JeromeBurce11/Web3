@@ -5,13 +5,12 @@ const account = require("./models/admin");
 const subscriber = require("./models/subscriber");
 const event = require("./models/event");
 const bodyParser = require('body-parser')
-var cors = require('cors')
+const cors = require('cors')
 const jwt = require("jsonwebtoken")
-var bcrypt = require("bcryptjs");
-
+const bcrypt = require("bcryptjs");
+const config = require('./config');
 const sgMail = require('@sendgrid/mail');
-
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
@@ -36,54 +35,72 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
+const checkToken = (req, res, next) => {
+  console.log(req.headers)
+  const header = req.headers['authorization'];
+
+  if(typeof header !== 'undefined') {
+      const bearer = header.split(' ');
+      const token = bearer[1];
+
+      req.token = token;
+      next();
+  } else {
+      //If header is undefined return Forbidden (403)
+      res.sendStatus(403)
+  }
+}
+app.get('/', checkToken, function (req, res) {
+  jwt.verify(req.token, config.secret, (err, authorizedData) => {
+    if(err){
+        //If error send Forbidden (403)
+        console.log('ERROR: Could not connect to the protected route');
+        res.sendStatus(403);
+    } else {
+        //If token is successfully verified, we can send the autorized data 
+        res.json({
+            message: 'Successful log in',
+            error : null,
+            authorizedData
+        });
+        console.log('SUCCESS: Connected to protected route');
+    }
+})
+
 app.get('/login', function (req, res) {
   let test = async function () {
-    console.log(req.headers.username)
     const exist = await account.getByUsernameAndGetPassword(req.headers.username);
     if (exist == null) {
       res.status(401).json({
+        success: false,
         message: "Validation failed. Given username and password aren't matching."
       })
     } else {
-      if (bcrypt.compareSync(password, exist[0].password)) {
-        var token = jwt.sign({
+      if (bcrypt.compareSync(req.headers.password, exist.password)) {
+        jwt.sign({
           exist
         }, config.secret, {
           expiresIn: 86400 // expires in 24 hours
+        }, (error, token) => {
+          if (error) {
+            res.json({
+              error : error,
+              data : null
+            })
+          }
+          res.json({
+            error:null,
+            token : token
+          })
         })
-        res.status(200).json({
-          success: true,
-          token: token,
-        })
+        
       }
       else {
         res.status(401).json({
+          success: false,
           message: "Validation failed. Given username and password aren't matching."
         })
       }
-    }
-  }
-  test();
-})
-
-app.post('/register', function (req, res) {
-  const hash = bcrypt.hashSync(req.headers.password, saltRounds);
-  let test = async function () {
-    const exist = await account.getByUsername(req.headers.username);
-    console.log("username", exist)
-    if (exist == null) {
-      let data = {
-        username: req.headers.username,
-        email: req.headers.email,
-        password: hash
-      }
-      await account.addPerson(data);
-      let item = await account.getLastAccount();
-      res.status(200).send(item)
-    } else {
-      res.status(401).json({
-        message: 'Username already exist!'
-      })
     }
   }
   test();
