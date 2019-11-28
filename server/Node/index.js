@@ -11,6 +11,13 @@ const retrieveAll = require('./events/retrieveAll');
 const retrieveByTitle = require('./events/retrieveByTitle')
 const remove = require('./events/delete');
 const update = require('./events/update');
+const bodyParser = require("body-parser");
+app.use(bodyParser.json());
+app.use(
+  bodyParser.urlencoded({
+    extended: true
+  })
+);
 
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
@@ -48,13 +55,15 @@ const checkToken = (req, res, next) => {
   }
 }
 
-app.get('/', checkToken, function (req, res) {
+app.get('/verify', checkToken, function (req, res) {
+  console.log(req.headers)
   verify.verifyToken(req, res);
 })
 app.post('/admin', (req, res) => {
   createAdmin.create(req, res);
 })
-app.post('/login', function (req, res) {
+app.post('/admin/login', function (req, res) {
+  console.log(req.body)
   login.login(req, res);
 })
 
@@ -77,6 +86,8 @@ app.delete('/event/delete', (req, res) => {
 app.put('/event/update', (req, res) => {
   update.update(req, res);
 })
+
+
 
 
 app.listen(3000, function () {

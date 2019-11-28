@@ -5,6 +5,7 @@ var Schema = new mongoose.Schema({
     dateCreated: {type: String, required : true},
     dateEvent: {type: String, required : true},
     address: {type: String, required : true},
+    image: {type: Blob, require:true},
     description: {type: String, required : true},
     createdBy: {type: String, required : true},
  });
